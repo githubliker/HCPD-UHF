@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFF</color>
+    <color name="user_title_dark">#29275a</color>
+    <color name="user_title_light">#9e9dac</color>
+    <color name="topcolor">#f7f7f7</color>
+    <color name="maincolor">#ff1E90FF</color>
+    <color name="usercenterbg">#F2F4F7</color>
+    <color name="titlecolor">#0099ff</color>
+    <color name="list_selected">#E0E0E0</color>
+    <color name="black1">#000000</color>
+    <color name="huise">#f0f0f0</color>
+</resources>

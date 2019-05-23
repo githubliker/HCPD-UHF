@@ -11,10 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.airhockey.android.ChartActivity;
 import com.airhockey.android.Constants;
 import com.airhockey.android.R;
-import com.airhockey.android.twoDimension.TwoDimensionChartActivity;
-import com.airhockey.android.twoDimension.TwoDimensionChartRenderer;
 import com.airhockey.android.util.DataHelper;
 import com.airhockey.wifi.listener.DataCallBack;
 import com.airhockey.wifi.util.SocketConHelper;
@@ -30,7 +29,7 @@ public class ChartThreeDimenFragment extends Fragment {
     private static String TAG = "ChartTwoDimenFragment";
     private GLSurfaceView glSurfaceView;
     private boolean rendererSet = false;
-    private AirHockeyRenderer renderer;
+    private ChartThreeDimenRenderer renderer;
     private float[] resultData = new float[SAMPLE_DATA_NUM *DATA_SPACE* SAMPLE_GROUP_NUM];
     private float[] statictisData;
 
@@ -59,13 +58,13 @@ public class ChartThreeDimenFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_chart_two_dimen, container, false);
         glSurfaceView = view.findViewById(R.id.gl_view);
         glSurfaceView.setEGLContextClientVersion(2);
-        glSurfaceView.setRenderer(renderer = new AirHockeyRenderer(getContext()));
+        glSurfaceView.setRenderer(renderer = new ChartThreeDimenRenderer(getContext()));
         TextView titleView = view.findViewById(R.id.chart_title);
         titleView.setText("PRPD");
         rendererSet = true;
         handler.sendEmptyMessageDelayed(0,1000);
         /** 触摸事件的注册 */
-        ((TwoDimensionChartActivity)this.getActivity()).registerMyTouchListener(myTouchListener);
+        ((ChartActivity)this.getActivity()).registerMyTouchListener(myTouchListener);
         return view;
     }
 
@@ -132,7 +131,7 @@ public class ChartThreeDimenFragment extends Fragment {
     private float mPreviousY;
 
     /** 接收MainActivity的Touch回调的对象，重写其中的onTouchEvent函数 */
-    TwoDimensionChartActivity.MyTouchListener myTouchListener = new TwoDimensionChartActivity.MyTouchListener() {
+    ChartActivity.MyTouchListener myTouchListener = new ChartActivity.MyTouchListener() {
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             float x = event.getX();
@@ -159,6 +158,6 @@ public class ChartThreeDimenFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         /** 触摸事件的注销 */
-        ((TwoDimensionChartActivity)this.getActivity()).unRegisterMyTouchListener(myTouchListener);
+        ((ChartActivity)this.getActivity()).unRegisterMyTouchListener(myTouchListener);
     }
 }

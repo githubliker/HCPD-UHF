@@ -1,4 +1,4 @@
-package com.airhockey.android.twoDimension;
+package com.airhockey.android;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -6,15 +6,16 @@ import android.view.MotionEvent;
 
 import com.airhockey.android.R;
 import com.airhockey.android.threeDimension.ChartThreeDimenFragment;
+import com.airhockey.android.twoDimension.ChartTwoDimenFragment;
 import com.blankj.utilcode.util.Utils;
 
 import java.util.ArrayList;
 
-public class TwoDimensionChartActivity extends FragmentActivity{
+public class ChartActivity extends FragmentActivity{
     /**
      * Hold a reference to our GLSurfaceView
      */
-    private static String TAG = "TwoDimensionChartActivity";
+    private static String TAG = "ChartActivity";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

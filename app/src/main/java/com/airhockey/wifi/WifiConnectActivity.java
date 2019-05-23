@@ -16,7 +16,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -25,11 +24,9 @@ import android.widget.Toast;
 
 import com.airhockey.android.Constants;
 import com.airhockey.android.R;
-import com.airhockey.android.threeDimension.AirHockeyActivity;
-import com.airhockey.android.twoDimension.TwoDimensionChartActivity;
+import com.airhockey.android.ChartActivity;
 import com.airhockey.wifi.listener.OnItemClickListener;
 import com.airhockey.wifi.util.wifiToolHelper;
-import com.kyleduo.switchbutton.SwitchButton;
 import com.thanosfisherman.wifiutils.WifiUtils;
 import com.thanosfisherman.wifiutils.wifiConnect.ConnectionSuccessListener;
 import com.thanosfisherman.wifiutils.wifiScan.ScanResultsListener;
@@ -92,6 +89,7 @@ public class WifiConnectActivity extends AppCompatActivity {
                  .scanWifi(new ScanResultsListener() {
                     @Override
                     public void onScanResults(@NonNull List<ScanResult> results) {
+//                        Toast.makeText(WifiConnectActivity.this,"扫描到局放WLAN设备"+results.size(),Toast.LENGTH_LONG).show();
                         if (results.isEmpty()){
                             Log.e(TAG, "SCAN RESULTS IT'S EMPTY");
                             if(!handler.hasMessages(0)){
@@ -151,7 +149,7 @@ public class WifiConnectActivity extends AppCompatActivity {
         enter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WifiConnectActivity.this, TwoDimensionChartActivity.class);
+                Intent intent = new Intent(WifiConnectActivity.this, ChartActivity.class);
                 startActivity(intent);
             }
         });

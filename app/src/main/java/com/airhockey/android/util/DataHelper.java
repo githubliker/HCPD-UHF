@@ -42,7 +42,7 @@ public class DataHelper {
             for (Map.Entry<Float, Integer> entry : set) {
 //                System.out.println(entry.getKey() + "---" + entry.getValue());
                 float y = entry.getKey();
-                float x = -2f+i*X_DATA_VIEW_COUNT*0.01F/ SAMPLE_DATA_NUM;
+                float x = -1.98f+i*X_DATA_VIEW_COUNT*0.01F/ SAMPLE_DATA_NUM;
                 float yNum = entry.getValue();
                 float[] color = genViewColorData(yNum/ Constants.SAMPLE_GROUP_NUM);
                 arrResule.add(x);
@@ -103,7 +103,7 @@ public class DataHelper {
         return statisticSampleData(DimensionOpration(tempData));
     }
 
-    //横坐标从 -2  到  1.45
+    //横坐标从 -1.98f  到  1.42
     //z轴从1.6 到 -2
     public static float[] genOneViewData(){
         float[] newData = new float[SAMPLE_DATA_NUM *DATA_SPACE];
@@ -111,7 +111,7 @@ public class DataHelper {
         java.text.DecimalFormat df = new java.text.DecimalFormat("#.##");
         for(int i = 0; i< SAMPLE_DATA_NUM; i++){
             float y = Float.valueOf(df.format(r.nextFloat()));
-            float x = -2f+i*X_DATA_VIEW_COUNT*0.01F/ SAMPLE_DATA_NUM;
+            float x = -1.98f+i*X_DATA_VIEW_COUNT*0.01F/ SAMPLE_DATA_NUM;
             float[] color = DataHelper.genViewColorData(y);
             newData[i*DATA_SPACE] = x;
             newData[DATA_SPACE*i+1] = y;

@@ -147,9 +147,9 @@ public class TwoDimensionChartRenderer implements Renderer {
     }
 
     private void initOrdinatePoints(){
-        point5 = new OrdinatePoint(1.72f,0,-1.99f,true);
-        textureText5 =  TextureHelper.loadStringTexture("1pf");
-        point6 = new OrdinatePoint(1.72f,0.5f,-1.99f,true);
+        point5 = new OrdinatePoint(1.72f,-0.15f,-1.99f,true);
+        textureText5 =  TextureHelper.loadStringTexture("1PF");
+        point6 = new OrdinatePoint(1.72f,0.35f,-1.99f,true);
         textureText6 =  TextureHelper.loadStringTexture("1000");
 
     }

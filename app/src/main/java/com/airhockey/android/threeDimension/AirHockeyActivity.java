@@ -21,12 +21,10 @@ import android.os.Message;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airhockey.android.Constants;
 import com.airhockey.android.R;
-import com.airhockey.android.twoDimension.TwoDimensionChartActivity;
 import com.airhockey.android.util.DataHelper;
 import com.airhockey.wifi.listener.DataCallBack;
 import com.airhockey.wifi.WifiConnectActivity;
@@ -45,7 +43,7 @@ public class AirHockeyActivity extends Activity implements View.OnClickListener 
     private ImageView openDevice;
     private GLSurfaceView glSurfaceView;
     private boolean rendererSet = false;
-    private AirHockeyRenderer renderer;
+    private ChartThreeDimenRenderer renderer;
 //    private float[] oldData;
     private float[] resultData = new float[SAMPLE_DATA_NUM *DATA_SPACE* SAMPLE_GROUP_NUM];
     private float[] statictisData;
@@ -71,7 +69,7 @@ public class AirHockeyActivity extends Activity implements View.OnClickListener 
 
         if (supportsEs2) {
             glSurfaceView.setEGLContextClientVersion(2);
-            glSurfaceView.setRenderer(renderer = new AirHockeyRenderer(this));
+            glSurfaceView.setRenderer(renderer = new ChartThreeDimenRenderer(this));
             rendererSet = true;
         } else {
             Toast.makeText(this, "This device does not support OpenGL ES 2.0.",

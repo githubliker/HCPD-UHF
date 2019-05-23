@@ -51,7 +51,7 @@ import com.airhockey.android.programs.TextureShaderProgram;
 import com.airhockey.android.util.MatrixHelper;
 import com.airhockey.android.util.TextureHelper;
 
-public class AirHockeyRenderer implements Renderer {
+public class ChartThreeDimenRenderer implements Renderer {
     private final Context context;
 
     private final float[] projectionMatrix = new float[16];
@@ -85,7 +85,7 @@ public class AirHockeyRenderer implements Renderer {
     float y = 4.5f;
     float z = (float) Math.sqrt(r*r - x*x - y*y);
 
-    public AirHockeyRenderer(Context context) {
+    public ChartThreeDimenRenderer(Context context) {
         this.context = context;
     }
 
@@ -255,7 +255,7 @@ public class AirHockeyRenderer implements Renderer {
         }
 
         y = y +angley;
-        maxY = (float) Math.sqrt(r*r - x*x)-1;
+        maxY = (float) Math.sqrt(r*r - x*x)-3;
         if( y < -3){
             y = -3;
         } else if(y >= maxY){

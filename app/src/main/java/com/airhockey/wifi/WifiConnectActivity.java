@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.airhockey.android.Constants;
 import com.airhockey.android.R;
 import com.airhockey.android.threeDimension.AirHockeyActivity;
+import com.airhockey.android.twoDimension.TwoDimensionChartActivity;
 import com.airhockey.wifi.listener.OnItemClickListener;
 import com.airhockey.wifi.util.wifiToolHelper;
 import com.kyleduo.switchbutton.SwitchButton;
@@ -150,7 +151,7 @@ public class WifiConnectActivity extends AppCompatActivity {
         enter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WifiConnectActivity.this, AirHockeyActivity.class);
+                Intent intent = new Intent(WifiConnectActivity.this, TwoDimensionChartActivity.class);
                 startActivity(intent);
             }
         });

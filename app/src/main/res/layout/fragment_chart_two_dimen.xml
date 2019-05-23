@@ -6,8 +6,9 @@
     <android.opengl.GLSurfaceView
         android:id="@+id/gl_view"
         android:layout_width="match_parent"
-        android:layout_height="350dp" />
+        android:layout_height="match_parent" />
     <TextView
+        android:id="@+id/chart_title"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:text="PRPS"
@@ -15,13 +16,4 @@
         android:gravity="left|center_vertical"
         android:textSize="18sp"
         android:layout_marginLeft="15dp"/>
-    <ImageView
-        android:id="@+id/open_device"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="right"
-        android:src="@drawable/icon_disconnect"
-        android:padding="12dp"
-        android:layout_marginRight="15dp"
-        android:visibility="gone"/>
 </FrameLayout>

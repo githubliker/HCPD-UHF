@@ -11,6 +11,7 @@ package com.airhockey.android.twoDimension;
 import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView.Renderer;
+import android.opengl.Matrix;
 import android.util.Log;
 
 import com.airhockey.android.R;
@@ -41,9 +42,11 @@ import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glViewport;
+import static android.opengl.Matrix.frustumM;
 import static android.opengl.Matrix.multiplyMM;
 import static android.opengl.Matrix.setIdentityM;
 import static android.opengl.Matrix.setLookAtM;
+import static android.opengl.Matrix.translateM;
 import static com.airhockey.android.Constants.DATA_SPACE;
 import static com.airhockey.android.Constants.SAMPLE_DATA_NUM;
 import static com.airhockey.android.Constants.SAMPLE_GROUP_NUM;
@@ -75,10 +78,10 @@ public class TwoDimensionChartRenderer implements Renderer {
     private int textureText0,textureText1,textureText2,textureText3,textureText4,textureText5,textureText6;
     private int indicateTexture;
 
-    float r = 9;
+    float r = 1;
     float x = 0f;
-    float y = 0.5f;
-    float z = (float) Math.sqrt(r*r - x*x - y*y);
+    float y = 0.01f;
+    float z = 1f;
 
     public TwoDimensionChartRenderer(Context context) {
         this.context = context;
@@ -110,17 +113,15 @@ public class TwoDimensionChartRenderer implements Renderer {
         // Set the OpenGL viewport to fill the entire surface.
         glViewport(0, 0, width, height);
         glEnable(GL_LINE_SMOOTH);
-        //角度越大 距离越小
-        MatrixHelper.perspectiveM(projectionMatrix, 35, (float) width
-            / (float) height, 1f, 20f);
+        float ratio=(float)width/height;
+        //设置透视投影
+        Matrix.frustumM(projectionMatrix, 0, -ratio, ratio, -1, 1, 1.2f, 10);
         setLookAtM(viewMatrix, 0, x, y, z, 0f, 0f, 0f, 0f, 1f, 0f);
         multiplyMM(viewProjectionMatrix,0,projectionMatrix,0,viewMatrix,0);
 
-//        setIdentityM(modelMatrix, 0);
-//        translateM(modelMatrix, 0, -6.8f, -1f, -7f);
-//        rotateM(modelMatrix, 0, 30, 0f, 1f, 0f);
-//
-//        multiplyMM(modelViewProjectionMatrix, 0, viewProjectionMatrix, 0, modelMatrix, 0);
+        setIdentityM(modelMatrix, 0);
+        translateM(modelMatrix, 0, 0f, -0.65f, 1.79f);
+        multiplyMM(modelViewProjectionMatrix, 0, viewProjectionMatrix, 0, modelMatrix, 0);
     }
 
     @Override
@@ -132,31 +133,31 @@ public class TwoDimensionChartRenderer implements Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // Draw the table.
         textureProgram.useProgram();
-        textureProgram.setUniforms(viewProjectionMatrix, texture);
+        textureProgram.setUniforms(modelViewProjectionMatrix, texture);
         ordinate.bindData(textureProgram);
         ordinate.draw();
 
         drawOrdinatePoints();
 
         colorProgram.useProgram();
-        colorProgram.setUniforms(viewProjectionMatrix);
+        colorProgram.setUniforms(modelViewProjectionMatrix);
         pointView.bindData(colorProgram,getPointViewData());
         pointView.draw();
 
     }
 
     private void initOrdinatePoints(){
-        point5 = new OrdinatePoint(1.7f,0,-1.99f,true);
+        point5 = new OrdinatePoint(1.72f,0,-1.99f,true);
         textureText5 =  TextureHelper.loadStringTexture("1pf");
         point6 = new OrdinatePoint(1.72f,0.5f,-1.99f,true);
         textureText6 =  TextureHelper.loadStringTexture("1000");
 
     }
     private void drawOrdinatePoints(){
-        textureProgram.setUniforms(viewProjectionMatrix, textureText5);
+        textureProgram.setUniforms(modelViewProjectionMatrix, textureText5);
         point5.bindData(textureProgram);
         point5.draw();
-        textureProgram.setUniforms(viewProjectionMatrix, textureText6);
+        textureProgram.setUniforms(modelViewProjectionMatrix, textureText6);
         point6.bindData(textureProgram);
         point6.draw();
     }

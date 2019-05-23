@@ -103,7 +103,7 @@ public class DataHelper {
         return statisticSampleData(DimensionOpration(tempData));
     }
 
-    //横坐标从 -1.9  到  1.5
+    //横坐标从 -2  到  1.45
     //z轴从1.6 到 -2
     public static float[] genOneViewData(){
         float[] newData = new float[SAMPLE_DATA_NUM *DATA_SPACE];

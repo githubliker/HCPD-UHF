@@ -80,7 +80,7 @@ public class AirHockeyRenderer implements Renderer {
     private int textureText0,textureText1,textureText2,textureText3,textureText4,textureText5,textureText6;
     private int indicateTexture;
 
-    float r = 8;
+    float r = 10;
     float x = -4f;
     float y = 4.5f;
     float z = (float) Math.sqrt(r*r - x*x - y*y);

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.airhockey.android.BaseFragment;
 import com.airhockey.android.Constants;
 import com.airhockey.android.R;
 import com.airhockey.android.util.DataHelper;
@@ -22,14 +23,12 @@ import static com.airhockey.android.Constants.SAMPLE_DATA_NUM;
 import static com.airhockey.android.Constants.SAMPLE_GROUP_NUM;
 
 
-public class ChartTwoDimenFragment extends Fragment {
+public class ChartTwoDimenFragment extends BaseFragment {
 
     private static String TAG = "ChartTwoDimenFragment";
     private GLSurfaceView glSurfaceView;
     private boolean rendererSet = false;
     private TwoDimensionChartRenderer renderer;
-    private float[] resultData = new float[SAMPLE_DATA_NUM *DATA_SPACE* SAMPLE_GROUP_NUM];
-    private float[] statictisData;
 
     public ChartTwoDimenFragment() {
     }
@@ -60,49 +59,13 @@ public class ChartTwoDimenFragment extends Fragment {
         TextView titleView = view.findViewById(R.id.chart_title);
         titleView.setText("PRPS");
         rendererSet = true;
-        handler.sendEmptyMessageDelayed(0,1000);
         return view;
     }
 
-    Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if(msg.what == 0){
-                operationData(DataHelper.genOneViewData());
-                statictisData = DataHelper.genPointViewData(resultData);
-                renderer.setPointViewData(statictisData);
-                glSurfaceView.requestRender();
-                handler.sendEmptyMessageDelayed(0,100);
-            } else if(msg.what == 1){
-                SocketConHelper.getInstance().getDataFromPC(callBack);
-            }
-        }
-    };
-
-    DataCallBack callBack = new DataCallBack() {
-        @Override
-        public void onReceive(float[] data) {
-            operationData(DataHelper.genOneViewData(data));
-            statictisData = DataHelper.genPointViewData(resultData);
-            renderer.setPointViewData(statictisData);
-            glSurfaceView.requestRender();
-        }
-    };
-
-    /*
-     将数组中的数据沿着Z轴移动TIME_SPCAE 距离，
-     并将新生成的数据添加到数组的最前面
-   */
-    private void operationData(float[] data){
-        DataHelper.reverseData(resultData,0, SAMPLE_DATA_NUM *DATA_SPACE -1);
-        DataHelper.reverseData(resultData, SAMPLE_DATA_NUM *DATA_SPACE,resultData.length -1);
-        DataHelper.reverseData(resultData,0,resultData.length -1);
-        for(int i = SAMPLE_DATA_NUM *DATA_SPACE; i<resultData.length; i= i+DATA_SPACE){
-            resultData[i+2] = resultData[i+2]- Constants.TIME_SPACE;
-            resultData[i+8] = resultData[i+8]-Constants.TIME_SPACE;
-        }
-        System.arraycopy(data, 0, resultData, 0, data.length);
+    @Override
+    public void update(float[] data, float[] data2) {
+        renderer.setPointViewData(data2);
+        glSurfaceView.requestRender();
     }
 
     @Override

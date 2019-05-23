@@ -6,11 +6,11 @@
     <android.opengl.GLSurfaceView
         android:id="@+id/gl_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="250dp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:text="信号频谱分析仪"
+        android:text="PRPS"
         android:textColor="@android:color/white"
         android:gravity="left|center_vertical"
         android:textSize="18sp"
@@ -22,5 +22,6 @@
         android:layout_gravity="right"
         android:src="@drawable/icon_disconnect"
         android:padding="12dp"
-        android:layout_marginRight="15dp"/>
+        android:layout_marginRight="15dp"
+        android:visibility="gone"/>
 </FrameLayout>

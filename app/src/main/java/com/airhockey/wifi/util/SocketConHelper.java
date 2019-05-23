@@ -70,12 +70,16 @@ public class SocketConHelper {
     }
 
     public void stopClientServer(){
-        client.cancel();
+        try {
+            client.cancel();
+        }catch (Exception e){}
     }
 
     public void releaseAllServer(){
-        client.cancel();
-        server.cancel();
+        try {
+            client.cancel();
+            server.cancel();
+        }catch (Exception e){}
     }
     //客户端发送线程
     public class Client implements Runnable {

@@ -28,6 +28,8 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.Log;
 
+import com.airhockey.android.R;
+
 public class TextureHelper {
     private static final String TAG = "TextureHelper";
 
@@ -112,7 +114,7 @@ public class TextureHelper {
         Bitmap bitmap = Bitmap.createBitmap(imgSize, imgSize, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
 //设置画布背景为透明，这样我们的纹理就只显示文字，而没有颜色背景
-        canvas.drawColor(Color.BLACK);
+        canvas.drawColor(Color.parseColor("#333333"));
         Paint p = new Paint();
 //设置字体、字体大小和字体颜色
         String familyName = "Times New Roman";

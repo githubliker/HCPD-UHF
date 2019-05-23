@@ -80,7 +80,7 @@ public class AirHockeyRenderer implements Renderer {
     private int textureText0,textureText1,textureText2,textureText3,textureText4,textureText5,textureText6;
     private int indicateTexture;
 
-    float r = 15;
+    float r = 8;
     float x = -4f;
     float y = 4.5f;
     float z = (float) Math.sqrt(r*r - x*x - y*y);
@@ -91,7 +91,7 @@ public class AirHockeyRenderer implements Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-        glClearColor(0f, 0f, 0f, 0f);
+        glClearColor(0.2f, 0.2f, 0.2f, 0f);
         glEnable(GLES20.GL_DEPTH_TEST);
 
 //        table = new Table();

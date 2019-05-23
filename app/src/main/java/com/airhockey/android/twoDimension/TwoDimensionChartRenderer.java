@@ -86,7 +86,7 @@ public class TwoDimensionChartRenderer implements Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-        glClearColor(0f, 0f, 0f, 0f);
+        glClearColor(0.2f, 0.2f, 0.2f, 0f);
         glEnable(GLES20.GL_DEPTH_TEST);
 
         ordinate = new Ordinate();

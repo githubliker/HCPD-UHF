@@ -1,6 +1,7 @@
 package com.airhockey.wifi;
 
 import android.Manifest;
+import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.os.Handler;
 import android.os.Message;
@@ -14,13 +15,17 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airhockey.android.Constants;
 import com.airhockey.android.R;
+import com.airhockey.android.threeDimension.AirHockeyActivity;
 import com.airhockey.wifi.listener.OnItemClickListener;
 import com.airhockey.wifi.util.wifiToolHelper;
 import com.kyleduo.switchbutton.SwitchButton;
@@ -36,50 +41,29 @@ import androidx.annotation.NonNull;
 
 public class WifiConnectActivity extends AppCompatActivity {
 
-    private String TAG = "WifiConnectActivity";
+    private String TAG = "SCAN RESULTS IT'S EMPTY";
     RecyclerView mRecyclerView;
-    SwitchButton stateButton;
     ProgressBar bar;
     MyRecycleViewAdapter mAdapter;
+    private ImageView wifiConnectIcon;
+    private LinearLayout wifiStateLL;
+    private TextView wifiName;
+    private Button enter;
     List<ScanResult> newResult = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wifi_connect);
+        setContentView(R.layout.activity_wifi_state);
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 555);
-        mRecyclerView =   findViewById(R.id.recyclerView);
-        stateButton = findViewById(R.id.state_button);
-        bar = findViewById(R.id.progress);
-        //设置RecyclerView管理器
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        initView();
         scanWifi();
-        stateButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
-                    openWifi();
-                } else {
-                    closeWifi();
-                }
-            }
-        });
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @android.support.annotation.NonNull String[] permissions, @android.support.annotation.NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if(requestCode == 555){
-//            if(wifiToolHelper.isWifiEnabled(getApplicationContext())){
-//                stateButton.setChecked(true);
-//                bar.setVisibility(View.VISIBLE);
-//                scanWifi();
-//            } else {
-//                openWifi();
-//            }
-//        }
     }
 
     private void openWifi(){
@@ -87,11 +71,9 @@ public class WifiConnectActivity extends AppCompatActivity {
             @Override
             public void isSuccess(boolean isSuccess) {
                 if(isSuccess){
-                    stateButton.setChecked(true);
                     bar.setVisibility(View.VISIBLE);
                     scanWifi();
                 } else {
-                    stateButton.setChecked(false);
                     Toast.makeText(WifiConnectActivity.this,"打开WLAN失败",Toast.LENGTH_LONG).show();
                     bar.setVisibility(View.INVISIBLE);
                 }
@@ -100,7 +82,6 @@ public class WifiConnectActivity extends AppCompatActivity {
     }
 
     private void closeWifi(){
-        stateButton.setChecked(false);
         WifiUtils.withContext(getApplicationContext()).disableWifi();
         newResult.clear();
         mAdapter.notifyDataSetChanged();
@@ -111,14 +92,12 @@ public class WifiConnectActivity extends AppCompatActivity {
                     @Override
                     public void onScanResults(@NonNull List<ScanResult> results) {
                         if (results.isEmpty()){
-                            Log.i(TAG, "SCAN RESULTS IT'S EMPTY");
-//                            Toast.makeText(WifiConnectActivity.this,"未扫描到任何WLAN设备",Toast.LENGTH_LONG).show();
+                            Log.e(TAG, "SCAN RESULTS IT'S EMPTY");
                             if(!handler.hasMessages(0)){
                                 handler.sendEmptyMessageDelayed(0,1500);
                             }
                             return;
                         }
-                        bar.setVisibility(View.INVISIBLE);
                         newResult.clear();
                         for(int i = 0;i<results.size();i++){
                          /*   if(results.get(i).SSID.startsWith(Constants.HEADSSID)){
@@ -151,6 +130,54 @@ public class WifiConnectActivity extends AppCompatActivity {
                 .start();
     }
 
+    private void initView() {
+        mRecyclerView =   findViewById(R.id.recyclerView);
+        bar = findViewById(R.id.progress);
+        //设置RecyclerView管理器
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        wifiConnectIcon = findViewById(R.id.wifi_connect_icon);
+        wifiStateLL = findViewById(R.id.wifi_state_ll);
+        wifiName = findViewById(R.id.wifi_name);
+        enter = findViewById(R.id.button_enter);
+
+        if (enter == null) {
+            return;
+        }
+
+        enter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WifiConnectActivity.this, AirHockeyActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    /**
+     * 连接成功
+     */
+    public void connectY(String ssid) {
+        wifiConnectIcon.setImageResource(R.drawable.wifi_connect_y);
+        wifiStateLL.setVisibility(View.GONE);
+        wifiName.setVisibility(View.VISIBLE);
+        enter.setVisibility(View.VISIBLE);
+        wifiName.setText(ssid);
+        bar.setVisibility(View.INVISIBLE);
+    }
+
+    /**
+     *连接失败
+     */
+    public void connectN() {
+        wifiConnectIcon.setImageResource(R.drawable.wifi_connect_n);
+        wifiStateLL.setVisibility(View.VISIBLE);
+        wifiName.setVisibility(View.INVISIBLE);
+        enter.setVisibility(View.VISIBLE);
+        bar.setVisibility(View.VISIBLE);
+    }
     @Override
     protected void onPause() {
         super.onPause();
@@ -170,6 +197,7 @@ public class WifiConnectActivity extends AppCompatActivity {
                 if(!TextUtils.isEmpty(ssid)){
                     mAdapter.setConnectSSID(ssid);
                     mAdapter.notifyDataSetChanged();
+                    connectY(ssid);
                 } else {
                     handler.sendEmptyMessageDelayed(1,2000);
                 }
@@ -187,8 +215,10 @@ public class WifiConnectActivity extends AppCompatActivity {
                 public void isSuccessful(boolean isSuccess) {
                     if(isSuccess){
                         ((TextView) view).setText("已连接");
+                        connectY(SSID);
                     } else {
                         ((TextView) view).setText("连接失败");
+                        connectN();
                     }
                     Toast.makeText(WifiConnectActivity.this,"连接wifi "+SSID +" 状态 "+isSuccess,Toast.LENGTH_SHORT).show();
                 }

@@ -8,4 +8,7 @@
 -->
 <resources>
     <string name="app_name">HCPD-UHF</string>
+    <string name="no_wifi_remind">WIFI未连接，请先</string>
+    <string name="connect">连接</string>
+    <string name="enter">进入</string>
 </resources>

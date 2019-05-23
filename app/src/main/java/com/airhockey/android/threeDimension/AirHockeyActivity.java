@@ -21,10 +21,12 @@ import android.os.Message;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airhockey.android.Constants;
 import com.airhockey.android.R;
+import com.airhockey.android.twoDimension.TwoDimensionChartActivity;
 import com.airhockey.android.util.DataHelper;
 import com.airhockey.wifi.listener.DataCallBack;
 import com.airhockey.wifi.WifiConnectActivity;

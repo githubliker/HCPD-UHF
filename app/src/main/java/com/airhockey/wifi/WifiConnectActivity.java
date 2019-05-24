@@ -1,8 +1,13 @@
 package com.airhockey.wifi;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
@@ -29,13 +34,10 @@ import com.airhockey.wifi.listener.OnItemClickListener;
 import com.airhockey.wifi.util.wifiToolHelper;
 import com.thanosfisherman.wifiutils.WifiUtils;
 import com.thanosfisherman.wifiutils.wifiConnect.ConnectionSuccessListener;
-import com.thanosfisherman.wifiutils.wifiScan.ScanResultsListener;
 import com.thanosfisherman.wifiutils.wifiState.WifiStateListener;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
 
 public class WifiConnectActivity extends AppCompatActivity {
 
@@ -48,15 +50,21 @@ public class WifiConnectActivity extends AppCompatActivity {
     private TextView wifiName;
     private Button enter;
     List<ScanResult> newResult = new ArrayList<>();
-
+    private WifiManager mWifiManager;
+    @SuppressLint("WifiManagerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wifi_state);
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 555);
 
+        mWifiManager = (WifiManager)getSystemService(WIFI_SERVICE);
         initView();
-        scanWifi();
+        newResult.addAll(mWifiManager.getScanResults());
+        mAdapter = new MyRecycleViewAdapter(newResult);
+        mAdapter.setOnItemClickListener(onClickListener);
+        mRecyclerView.setAdapter(mAdapter);
+
     }
 
     @Override
@@ -64,62 +72,51 @@ public class WifiConnectActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    private void openWifi(){
+    @Override
+    protected void onResume() {
+        super.onResume();
+        final IntentFilter filter = new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+        registerReceiver(mReceiver, filter);
         WifiUtils.withContext(getApplicationContext()).enableWifi(new WifiStateListener() {
             @Override
             public void isSuccess(boolean isSuccess) {
+                Log.e(TAG,"WIFI STATE "+isSuccess);
                 if(isSuccess){
-                    bar.setVisibility(View.VISIBLE);
-                    scanWifi();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            bar.setVisibility(View.VISIBLE);
+                            mWifiManager.startScan();
+                        }
+                    });
                 } else {
-                    Toast.makeText(WifiConnectActivity.this,"打开WLAN失败",Toast.LENGTH_LONG).show();
-                    bar.setVisibility(View.INVISIBLE);
+                    Toast.makeText(WifiConnectActivity.this,"请允许本应用访问您的WIFI设备",Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
 
-    private void closeWifi(){
-        WifiUtils.withContext(getApplicationContext()).disableWifi();
-        newResult.clear();
-        mAdapter.notifyDataSetChanged();
-    }
-    private void scanWifi(){
-        WifiUtils.withContext(getApplicationContext())
-                 .scanWifi(new ScanResultsListener() {
-                    @Override
-                    public void onScanResults(@NonNull List<ScanResult> results) {
-//                        Toast.makeText(WifiConnectActivity.this,"扫描到局放WLAN设备"+results.size(),Toast.LENGTH_LONG).show();
-                        if (results.isEmpty()){
-                            Log.e(TAG, "SCAN RESULTS IT'S EMPTY");
-                            if(!handler.hasMessages(0)){
-                                handler.sendEmptyMessageDelayed(0,1500);
-                            }
-                            return;
-                        }
-                        newResult.clear();
-                        for(int i = 0;i<results.size();i++){
-                         /*   if(results.get(i).SSID.startsWith(Constants.HEADSSID)){
-                                newResult.add(results.get(i));
-                            }*/
-                            if(!results.get(i).SSID.isEmpty()){
-                                newResult.add(results.get(i));
-                            }
-                        }
-                        if(newResult.size() == 0){
-                            Toast.makeText(WifiConnectActivity.this,"未扫描到任何局放WLAN设备",Toast.LENGTH_LONG).show();
-                        } else {
-                            mAdapter = new MyRecycleViewAdapter(newResult);
-                            mAdapter.setOnItemClickListener(onClickListener);
-                            mRecyclerView.setAdapter(mAdapter);
-                            if(!handler.hasMessages(1)){
-                                handler.sendEmptyMessageDelayed(1,100);
-                            }
-                        }
-                        bar.setVisibility(View.INVISIBLE);
-                    }
-                }).start();
-    }
+    private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (action.equals(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
+                newResult.clear();
+                newResult.addAll( mWifiManager.getScanResults());
+                mAdapter.notifyDataSetChanged();
+
+                if(!handler.hasMessages(1)){
+                    handler.sendEmptyMessageDelayed(1,100);
+                }
+
+                if(!handler.hasMessages(0)){
+                    handler.sendEmptyMessageDelayed(0,2000);
+                }
+            }
+
+        }
+    };
 
     private void connectWifi(String SSID ,String BSSID,ConnectionSuccessListener listener){
         WifiUtils.withContext(getApplicationContext())
@@ -177,11 +174,14 @@ public class WifiConnectActivity extends AppCompatActivity {
         enter.setVisibility(View.VISIBLE);
         bar.setVisibility(View.VISIBLE);
     }
+
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterReceiver(mReceiver);
         if(handler != null){
             handler.removeMessages(0);
+            handler.removeMessages(1);
         }
     }
 
@@ -189,9 +189,7 @@ public class WifiConnectActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if(msg.what == 0){
-                scanWifi();
-            } else if (msg.what == 1){
+            if (msg.what == 1){
                 String ssid = wifiToolHelper.getConnectSSID(getApplicationContext());
                 if(!TextUtils.isEmpty(ssid)){
                     mAdapter.setConnectSSID(ssid);

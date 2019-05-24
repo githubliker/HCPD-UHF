@@ -80,9 +80,9 @@ public class ChartThreeDimenRenderer implements Renderer {
     private int textureText0,textureText1,textureText2,textureText3,textureText4,textureText5,textureText6;
     private int indicateTexture;
 
-    float r = 10;
+    float r = 7.8f;
     float x = -4f;
-    float y = 4.5f;
+    float y = 5f;
     float z = (float) Math.sqrt(r*r - x*x - y*y);
 
     public ChartThreeDimenRenderer(Context context) {
@@ -221,7 +221,7 @@ public class ChartThreeDimenRenderer implements Renderer {
     public float[] getPointViewData(){
         return pointData;
     }
-    float maxX = 14;
+    float maxX = r;
     float maxY = 8;
     int isBack = 1;
     public void setAngle(float anglex,float angley) {
@@ -233,7 +233,7 @@ public class ChartThreeDimenRenderer implements Renderer {
 //        } else {
 //            rotateM(modelMatrix, 0, mAngleY, 10f, 0f, 0f);
 //        }
-
+        maxX = (float) Math.sqrt(r*r - y*y);
         if(isBack == 1){
             x = x -anglex;
             if(x < -maxX){
@@ -254,13 +254,13 @@ public class ChartThreeDimenRenderer implements Renderer {
             }
         }
 
-        y = y +angley;
-        maxY = (float) Math.sqrt(r*r - x*x)-3;
-        if( y < -3){
-            y = -3;
-        } else if(y >= maxY){
-            y = maxY;
-        }
+//        y = y +angley;
+//        maxY = (float) Math.sqrt(r*r - x*x);
+//        if( y < -2){
+//            y = -2;
+//        } else if(y >= maxY-1){
+//            y = maxY-1;
+//        }
         double result = r*r - x*x - y*y;
         if(result  >0 ){
             z = (float) Math.sqrt(r*r - x*x - y*y)* isBack;

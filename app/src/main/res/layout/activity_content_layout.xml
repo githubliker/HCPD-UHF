@@ -9,7 +9,7 @@ android:background="@color/app_main_black"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="8dp"
-        android:layout_weight="3"/>
+        android:layout_weight="4"/>
     <FrameLayout
         android:id="@+id/two_chart_container"
         android:layout_width="match_parent"
@@ -17,5 +17,5 @@ android:background="@color/app_main_black"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
-        android:layout_weight="1"/>
+        android:layout_weight="3"/>
 </LinearLayout>

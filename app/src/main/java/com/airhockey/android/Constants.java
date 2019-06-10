@@ -10,6 +10,7 @@ package com.airhockey.android;
 
 public class Constants {
     public static final String HEADSSID = "HC-";
+    public static String SSID = "";
     public static final String PASSWORD = "HCDQ1234";
 
     public static final int BYTES_PER_FLOAT = 4;

@@ -107,7 +107,7 @@ public class SocketConHelper {
                         e1.printStackTrace();
                     }
                     clinetSocket.send(packet);
-                    Log.e(TAG,"send data time    "+System.currentTimeMillis());
+//                    Log.e(TAG,"send data time    "+System.currentTimeMillis());
                 }
 
             } catch (Exception e) {

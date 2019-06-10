@@ -3,17 +3,21 @@ package com.airhockey.android;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
-import com.airhockey.android.R;
+import com.airhockey.BaseActivity;
 import com.airhockey.android.listener.EventManager;
 import com.airhockey.android.threeDimension.ChartThreeDimenFragment;
 import com.airhockey.android.twoDimension.ChartTwoDimenFragment;
 import com.airhockey.android.util.DataHelper;
 import com.airhockey.wifi.listener.DataCallBack;
 import com.airhockey.wifi.util.SocketConHelper;
+import com.blankj.utilcode.util.NetworkUtils;
 import com.blankj.utilcode.util.Utils;
+import com.thanosfisherman.wifiutils.WifiUtils;
+import com.thanosfisherman.wifiutils.wifiConnect.ConnectionSuccessListener;
 
 import java.util.ArrayList;
 
@@ -21,7 +25,7 @@ import static com.airhockey.android.Constants.DATA_SPACE;
 import static com.airhockey.android.Constants.SAMPLE_DATA_NUM;
 import static com.airhockey.android.Constants.SAMPLE_GROUP_NUM;
 
-public class ChartActivity extends FragmentActivity{
+public class ChartActivity extends BaseActivity {
     /**
      * Hold a reference to our GLSurfaceView
      */
@@ -34,7 +38,6 @@ public class ChartActivity extends FragmentActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_content_layout);
 
-        Utils.init(getApplicationContext());
         getSupportFragmentManager().beginTransaction().add(R.id.two_chart_container,
                 ChartTwoDimenFragment.newInstance()).commitAllowingStateLoss();
         getSupportFragmentManager().beginTransaction().add(R.id.three_chart_container,
@@ -59,6 +62,42 @@ public class ChartActivity extends FragmentActivity{
             }
         }
     };
+
+    @Override
+    public void onNetDisconnected() {
+        super.onNetDisconnected();
+        Toast.makeText(this,"网络已断开连接，正在重试",Toast.LENGTH_SHORT).show();
+        SocketConHelper.getInstance().releaseAllServer();
+        //TODO 打开wifi设备
+        NetworkUtils.setWifiEnabled(true);
+    }
+
+    @Override
+    public void onNetConnected(NetworkUtils.NetworkType networkType) {
+        super.onNetConnected(networkType);
+        if(networkType == NetworkUtils.NetworkType.NETWORK_WIFI){
+            Log.e(TAG,"start work on soc");
+            SocketConHelper.getInstance().initialization();
+            SocketConHelper.getInstance().getDataFromPC(callBack);
+        } else  if(networkType == NetworkUtils.NetworkType.NETWORK_4G||networkType == NetworkUtils.NetworkType.NETWORK_3G
+                    || networkType == NetworkUtils.NetworkType.NETWORK_2G){
+            NetworkUtils.setWifiEnabled(true);
+        } else {
+            //TODO 连接指定wifi设备
+            WifiUtils.withContext(getApplicationContext()).connectWith(Constants.SSID,Constants.PASSWORD)
+                    .setTimeout(10000)
+                    .onConnectionResult(new ConnectionSuccessListener() {
+                        @Override
+                        public void isSuccessful(boolean isSuccess) {
+                            if(isSuccess){
+                                Toast.makeText(ChartActivity.this,"网络已恢复连接",Toast.LENGTH_SHORT).show();
+                            } else {
+                                NetworkUtils.setWifiEnabled(true);
+                            }
+                        }
+                    }).start();
+        }
+    }
 
     @Override
     protected void onDestroy() {
